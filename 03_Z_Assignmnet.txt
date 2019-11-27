@@ -29,23 +29,16 @@ namespace/web created
 
 vi nginx-pod.yml
 
---- 
 apiVersion: v1
-args: 
-  - "-g"
-  - "daemon off;"
-  - "-q"
-command: 
-  - nginx
 kind: Pod
-metadata: 
+metadata:
   name: nginx-pod
   namespace: web
-spec: 
-  containers: 
-    - 
-      image: nginx
-      name: nginx-ctr
+spec:
+  containers:
+  - name: nginx-ctr
+    image: nginx
+    command: ["nginx","-g","daemon off;"]
 
 root@ip-172-31-33-89:/home/ubuntu# kubectl apply -f nginx-pod.yml --validate=false
 pod/nginx-pod created
