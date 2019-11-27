@@ -1,0 +1,44 @@
+Learning Objectives:-
+Create the cron job in the cluster
+Allow the cron job to run successfully
+
+Problem Statement:-
+Your company has a simple data cleanup process that is run periodically for maintenance purposes. They would like to stop doing this manually in order to save time, so you have been asked to implement a cron job in the Kubernetes cluster to run this process. Create a cron job called cleanup-cronjob using the linuxacademycontent/data-cleanup:1 image. Have the job run every minute with the following cron expression: */1 * * * *.
+
+
+------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------
+
+vi cleanup-cronjob.yml
+
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: cleanup-cronjob
+spec:
+  schedule: "*/1 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: my-cleanup
+            image: linuxacademycontent/data-cleanup:1
+          restartPolicy: OnFailure
+
+master $ kubectl apply -f cleanup-cronjob.yml
+cronjob.batch/cleanup-cronjob created
+
+Events:
+  Type    Reason            Age    From                Message
+  ----    ------            ----   ----                -------
+  Normal  SuccessfulCreate  4m59s  cronjob-controller  Created job cleanup-cronjob-1574859000
+  Normal  SawCompletedJob   4m39s  cronjob-controller  Saw completed job: cleanup-cronjob-1574859000
+  Normal  SuccessfulCreate  3m59s  cronjob-controller  Created job cleanup-cronjob-1574859060
+  Normal  SawCompletedJob   3m49s  cronjob-controller  Saw completed job: cleanup-cronjob-1574859060
+  Normal  SuccessfulDelete  3m48s  cronjob-controller  Deleted job cleanup-cronjob-1574859000
+  Normal  SuccessfulCreate  2m58s  cronjob-controller  Created job cleanup-cronjob-1574859120
+  Normal  SawCompletedJob   2m48s  cronjob-controller  Saw completed job: cleanup-cronjob-1574859120
